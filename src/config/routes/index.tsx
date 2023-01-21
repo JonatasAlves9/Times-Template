@@ -6,7 +6,7 @@ import {
     createRoutesFromElements,
     RouterProvider,
     Navigate,
-    useLocation, BrowserRouter
+    useLocation, BrowserRouter, Outlet
 } from "react-router-dom";
 
 //Layouts
@@ -14,35 +14,33 @@ import {
 // import VerticalLayout from "../Layouts/index";
 //routes
 import {authProtectedRoutes, publicRoutes} from "./allRoutes";
-import {AuthProtected, AccessRoute} from './AuthProtected';
+import Layout from "../../layout";
+import {Breadcrumb, Col, Container, Row} from "reactstrap";
 
 const Index = () => {
-    const availablePublicRoutesPaths = publicRoutes.map((r) => r.path);
-    const availableAuthRoutesPath = authProtectedRoutes.map((r) => r.path);
-
     return (
         <>
             <BrowserRouter>
                 <Routes>
-                    <Route>
-                        {
-                            publicRoutes.map((route, idx) => (
-                                <Route
-                                    path={route.path}
-                                    element={route.component}
-                                    key={idx}
-                                />
-                            ))
-                        }
+                    {
+                        publicRoutes.map((route, idx) => (
+                            <Route
+                                path={route.path}
+                                element={route.component}
+                                key={idx}
+                            />
+                        ))
+                    }
+                    <Route path="/" element={<Layout/>}>
+                        <Route path="profile" element={<ProtectedPage/>}/>
+                        <Route path="settings" element={<ProtectedPage/>}/>
                         <>
                             {
                                 authProtectedRoutes.map((route, idx) => (
                                     <Route
                                         path={route.path}
                                         element={
-                                            <AuthProtected>
-                                                    <ProtectedPage/>
-                                            </AuthProtected>
+                                            <ProtectedPage/>
                                         }
                                         key={idx}
                                     />
@@ -50,6 +48,7 @@ const Index = () => {
                             }
                         </>
                     </Route>
+
                 </Routes>
             </BrowserRouter>
         </>
@@ -60,17 +59,19 @@ export default Index;
 
 
 function ProtectedPage() {
-    return <h3>Protected</h3>;
+    return (
+        <React.Fragment>
+            <div className="page-content">
+                <Container fluid>
+                    <Breadcrumb title="Starter" pageTitle="Pages"/>
+                    <Row>
+                        <Col xs={12}>
+                            <p>Teste</p>
+                        </Col>
+                    </Row>
+                </Container>
+            </div>
+        </React.Fragment>
+    );
 }
 
-function Layout(Children: any) {
-    return (
-        <div style={{
-            display: 'flex',
-            height: '100vh',
-            width: '100%',
-            backgroundColor: 'red'
-        }}>
-            <Children/>
-        </div>)
-}
